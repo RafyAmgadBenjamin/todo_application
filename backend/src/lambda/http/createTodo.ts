@@ -25,7 +25,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     let newTodoItem: TodoItem;
     newTodoItem = await CreateSingleTodo(userId, newTodo)
     // Store the new Todo
-    storeTodoIteminDB(newTodoItem)
+    await storeTodoIteminDB(newTodoItem)
     return {
         statusCode: 201,
         headers: {
