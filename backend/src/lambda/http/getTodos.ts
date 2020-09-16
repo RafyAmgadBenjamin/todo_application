@@ -5,18 +5,18 @@ import * as AWS from 'aws-sdk'
 
 const docClient = new AWS.DynamoDB.DocumentClient()
 const todosTable = process.env.TODOS_TABLE
-const todoIdIndex = process.env.TODOS_USER_INDEX
+const todoUserIndex = process.env.TODOS_USER_INDEX
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   // TODO: Get all TODO items for a current user
   console.log("processing get todos", event)
   // const todoId = event.pathParameters.todoId
   // TODO: replace this constant with user id from jwt
-  let userId = 1
+  let userId = "1"
 
   const result = await docClient.query({
     TableName: todosTable,
-    IndexName: todoIdIndex,
+    IndexName: todoUserIndex,
     KeyConditionExpression: 'userId = :userId',
     ExpressionAttributeValues: {
       ':userId': userId
