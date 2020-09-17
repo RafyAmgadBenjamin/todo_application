@@ -11,6 +11,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     const todoId = event.pathParameters.todoId
 
     // TODO: Remove a TODO item by id
+
+    // TODO: Update the userId to be from jwt
     const userId = "1"
 
 
