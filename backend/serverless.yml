@@ -17,6 +17,7 @@ provider:
     TODOS_USER_INDEX:  Todos-user-index-${self:provider.stage}
     TODOS_S3_BUCKET:   todos-attachment-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
+    # AUTH_0_SECRET:  OVgxWcpO6GBif7Swu5nDGZ5tLMYANDH13_ME_M5z53K87CoNmcLvazvRXA8mzIcW
     
 
   iamRoleStatements:

@@ -3,6 +3,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } f
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
 import { TodoItem } from '../../models/TodoItem'
 import { TodoUpdate } from '../../models/TodoUpdate'
+import { getUserId } from '../utils'
 
 import * as AWS from 'aws-sdk'
 
@@ -17,7 +18,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
 
     // TODO: Update the userId to be from jwt
-    const userId = "1"
+    const userId = getUserId(event)
 
     const result = await docClient.get({
         TableName: todosTable,

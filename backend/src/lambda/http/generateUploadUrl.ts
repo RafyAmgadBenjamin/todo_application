@@ -7,6 +7,7 @@ import { S3 } from 'aws-sdk'
 import * as AWS from 'aws-sdk'
 import { TodoItem } from '../../models/TodoItem'
 import { createLogger } from '../../utils/logger'
+import { getUserId } from '../utils'
 
 
 
@@ -23,7 +24,8 @@ const s3 = new S3({ signatureVersion: 'v4' })
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const todoId = event.pathParameters.todoId
     // TODO: update the user id to be from jwt
-    const userId = "1"
+    const userId = getUserId(event)
+
     // const todoAttachmentId = uuid.v4()
     logger.info('generateUploadUrl method fired', {
         // Additional information stored with a log statement

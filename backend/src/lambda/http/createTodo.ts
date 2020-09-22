@@ -8,6 +8,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } f
 
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 import { TodoItem } from '../../models/TodoItem'
+import { getUserId } from '../utils'
 
 const docClient = new AWS.DynamoDB.DocumentClient()
 const todosTable = process.env.TODOS_TABLE
@@ -20,7 +21,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
     // TODO: update it to be read from JWT
 
-    const userId = "1"
+    const userId = getUserId(event)
     // Create the new Todo item
     let newTodoItem: TodoItem;
     newTodoItem = await createSingleTodo(userId, newTodo)
