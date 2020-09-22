@@ -23,7 +23,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     const userId = "1"
     // Create the new Todo item
     let newTodoItem: TodoItem;
-    newTodoItem = await CreateSingleTodo(userId, newTodo)
+    newTodoItem = await createSingleTodo(userId, newTodo)
     // Store the new Todo
     await storeTodoIteminDB(newTodoItem)
     return {
@@ -38,7 +38,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     }
 }
 
-async function CreateSingleTodo(userId: string, createTodoRequest: CreateTodoRequest): Promise<TodoItem> {
+async function createSingleTodo(userId: string, createTodoRequest: CreateTodoRequest): Promise<TodoItem> {
     // Generate a UUID for the todo
     const todoId = uuid.v4()
     const newItem: TodoItem = {
