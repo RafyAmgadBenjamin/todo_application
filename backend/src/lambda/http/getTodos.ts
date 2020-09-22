@@ -25,23 +25,13 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     }
   }).promise()
 
-
-  if (result.Count !== 0) {
-    return {
-      statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify(result.Items)
-    }
-  }
-
-
+  let items = result.Items
   return {
-    statusCode: 404,
+    statusCode: 200,
     headers: {
       'Access-Control-Allow-Origin': '*'
     },
-    body: ''
+    body: JSON.stringify({ items })
   }
+
 }
