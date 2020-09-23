@@ -1,13 +1,15 @@
 import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
-import * as AWS from 'aws-sdk'
+// import * as AWS from 'aws-sdk'
 import { TodoItem } from '../../models/TodoItem'
 import { getUserId } from '../utils'
+import { TodosRepository } from '../../dataLayer/todos'
 
 
-const docClient = new AWS.DynamoDB.DocumentClient()
-const todosTable = process.env.TODOS_TABLE
+
+// const docClient = new AWS.DynamoDB.DocumentClient()
+// const todosTable = process.env.TODOS_TABLE
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const todoId = event.pathParameters.todoId
@@ -16,13 +18,9 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
     // TODO: Update the userId to be from jwt
     const userId = getUserId(event)
+    let todosRepository = new TodosRepository()
 
-    const result = await docClient.get({
-        TableName: todosTable,
-        Key: {
-            todoId
-        }
-    }).promise()
+    const result = await todosRepository.getTodoItem(todoId)
 
     const todo_item = result.Item as TodoItem
 
@@ -48,7 +46,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         }
     }
     // Delete Item from DB
-    await deleteTodoItemFromDB(todo_item.todoId)
+    await todosRepository.deleteTodoItem(todo_item.todoId)
 
     return {
         statusCode: 200,
@@ -60,11 +58,4 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 }
 
 
-async function deleteTodoItemFromDB(todoId: String) {
-    await docClient.delete({
-        TableName: todosTable,
-        Key: {
-            todoId
-        }
-    }).promise()
-}
+

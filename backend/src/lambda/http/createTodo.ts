@@ -1,17 +1,14 @@
 import 'source-map-support/register'
 import * as uuid from 'uuid'
-import * as AWS from 'aws-sdk'
-
-
-
+// import * as AWS from 'aws-sdk'
+import { TodosRepository } from '../../dataLayer/todos'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
-
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 import { TodoItem } from '../../models/TodoItem'
 import { getUserId } from '../utils'
 
-const docClient = new AWS.DynamoDB.DocumentClient()
-const todosTable = process.env.TODOS_TABLE
+// const docClient = new AWS.DynamoDB.DocumentClient()
+// const todosTable = process.env.TODOS_TABLE
 
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -26,7 +23,9 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     let item: TodoItem;
     item = await createSingleTodo(userId, newTodo)
     // Store the new Todo
-    await storeTodoIteminDB(item)
+    let todosRepository = new TodosRepository()
+
+    await todosRepository.addTodoItem(item)
     return {
         statusCode: 201,
         headers: {
@@ -56,9 +55,3 @@ async function createSingleTodo(userId: string, createTodoRequest: CreateTodoReq
     return newItem
 }
 
-async function storeTodoIteminDB(todoItem: TodoItem) {
-    await docClient.put({
-        TableName: todosTable,
-        Item: todoItem
-    }).promise()
-}

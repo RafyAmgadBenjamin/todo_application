@@ -1,7 +1,7 @@
 import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 import { S3 } from 'aws-sdk'
-// import { TodosRepository } from '../../dataLayer/todos'
+import { TodosRepository } from '../../dataLayer/todos'
 // import { UpgradeRequired } from 'http-errors'
 // import * as uuid from 'uuid'
 import * as AWS from 'aws-sdk'
@@ -40,19 +40,12 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     })
     // TODO: make it work from repository
     // Get the todo to update it
-    // let todosRepository = new TodosRepository()
+    let todosRepository = new TodosRepository()
     // let result = await todosRepository.getTodoItemFromDB(todoId)
     //    let todo = result.Item as TodoItem
 
 
-    const result = await docClient.get({
-        TableName: todosTable,
-        Key: {
-            todoId
-        }
-    }).promise()
-
-
+    const result = await todosRepository.getTodoItem(todoId)
     const todo = result.Item as TodoItem
     logger.info('generateUploadUrl method get todo', {
         // Additional information stored with a log statement

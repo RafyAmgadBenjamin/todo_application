@@ -2,14 +2,16 @@ import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
 import { TodoItem } from '../../models/TodoItem'
-import { TodoUpdate } from '../../models/TodoUpdate'
+// import { TodoUpdate } from '../../models/TodoUpdate'
 import { getUserId } from '../utils'
+import { TodosRepository } from '../../dataLayer/todos'
 
-import * as AWS from 'aws-sdk'
+
+// import * as AWS from 'aws-sdk'
 
 
-const docClient = new AWS.DynamoDB.DocumentClient()
-const todosTable = process.env.TODOS_TABLE
+// const docClient = new AWS.DynamoDB.DocumentClient()
+// const todosTable = process.env.TODOS_TABLE
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const todoId = event.pathParameters.todoId
@@ -19,14 +21,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
     // TODO: Update the userId to be from jwt
     const userId = getUserId(event)
-
-    const result = await docClient.get({
-        TableName: todosTable,
-        Key: {
-            todoId
-        }
-    }).promise()
-
+    let todosRepository = new TodosRepository()
+    const result = await todosRepository.getTodoItem(todoId)
     const todo_item = result.Item as TodoItem
 
     // Todo item is not found
@@ -51,7 +47,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         }
     }
     // Update todo in the DB
-    await updateTodoItemFromDB(updatedTodo, todoId)
+    await todosRepository.updateTodoItem(updatedTodo, todoId)
 
     return {
         statusCode: 200,
@@ -64,21 +60,3 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 }
 
 
-async function updateTodoItemFromDB(todoUpdated: TodoUpdate, todoId: String) {
-    await docClient.update({
-        TableName: todosTable,
-        Key: {
-            todoId
-        },
-        UpdateExpression: 'set #name = :name, dueDate = :dueDate, done = :done',
-        ExpressionAttributeNames: {
-            "#name": "name"
-        },
-        ExpressionAttributeValues: {
-            ":name": todoUpdated.name,
-            ":dueDate": todoUpdated.dueDate,
-            ":done": todoUpdated.done
-        }
-
-    }).promise()
-}
