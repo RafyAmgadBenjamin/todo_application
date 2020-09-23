@@ -1,6 +1,5 @@
 import { APIGatewayProxyEvent } from "aws-lambda";
 import { parseUserId } from "../auth/utils";
-import { TodoItem } from '../models/TodoItem'
 
 
 /**
@@ -18,26 +17,3 @@ export function getUserId(event: APIGatewayProxyEvent): string {
 }
 
 
-export function validateTodoItem(todoItem: TodoItem, userId: string) {
-  // Todo item is not found
-  if (!todoItem) {
-    return {
-      statusCode: 404,
-      headers: {
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: ''
-    }
-  }
-
-  // User is not allowed to update the todo
-  if (todoItem.userId !== userId) {
-    return {
-      statusCode: 403,
-      headers: {
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: ''
-    }
-  }
-}

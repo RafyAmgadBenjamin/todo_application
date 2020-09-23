@@ -1,11 +1,13 @@
 import 'source-map-support/register'
-import * as uuid from 'uuid'
 // import * as AWS from 'aws-sdk'
 import { TodosRepository } from '../../dataLayer/todos'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 import { TodoItem } from '../../models/TodoItem'
 import { getUserId } from '../utils'
+import { createSingleTodo } from '../../BusinessLayer/todos'
+
+
 
 // const docClient = new AWS.DynamoDB.DocumentClient()
 // const todosTable = process.env.TODOS_TABLE
@@ -38,20 +40,4 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     }
 }
 
-async function createSingleTodo(userId: string, createTodoRequest: CreateTodoRequest): Promise<TodoItem> {
-    // Generate a UUID for the todo
-    const todoId = uuid.v4()
-    const newItem: TodoItem = {
-        userId,
-        todoId,
-        // in ISO format (ISO 8601) i.e, in the form of (YYYY-MM-DDTHH:mm:ss.sssZ or ±YYYYYY-MM-DDTHH:mm:ss.sssZ)
-        createdAt: new Date().toISOString(),
-        //by default it will be false
-        done: false,
-        attachmentUrl: null,
-        // Copy the rest of properties from CreatedTodoRequest to TODOItem 
-        ...createTodoRequest
-    }
-    return newItem
-}
 

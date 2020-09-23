@@ -1,13 +1,15 @@
 import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
-import { S3 } from 'aws-sdk'
+// import { S3 } from 'aws-sdk'
 import { TodosRepository } from '../../dataLayer/todos'
 // import { UpgradeRequired } from 'http-errors'
 // import * as uuid from 'uuid'
 // import * as AWS from 'aws-sdk'
 import { TodoItem } from '../../models/TodoItem'
 import { createLogger } from '../../utils/logger'
-import { getUserId, validateTodoItem } from '../utils'
+import { getUserId } from '../utils'
+import { validateTodoItem, getTodoAttachmentUrl, getUploadUrl } from '../../BusinessLayer/todos'
+
 
 
 
@@ -15,11 +17,11 @@ import { getUserId, validateTodoItem } from '../utils'
 // import * as AWS from 'aws-sdk'
 const logger = createLogger('auth')
 
-const bucketName = process.env.TODOS_S3_BUCKET
-const urlExpiration = process.env.SIGNED_URL_EXPIRATION
+// const bucketName = process.env.TODOS_S3_BUCKET
+// const urlExpiration = process.env.SIGNED_URL_EXPIRATION
 // const docClient = new AWS.DynamoDB.DocumentClient()
 // const todosTable = process.env.TODOS_TABLE
-const s3 = new S3({ signatureVersion: 'v4' })
+// const s3 = new S3({ signatureVersion: 'v4' })
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const todoId = event.pathParameters.todoId
@@ -81,24 +83,4 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
 }
 
-async function getTodoAttachmentUrl(todoAttachmentId: string): Promise<string> {
-    // Get the url that we use to update the todo item
-    return `https://${bucketName}.s3.amazonaws.com/${todoAttachmentId}`
-}
-
-function getUploadUrl(todoId: string) {
-    // Get a signed url 
-    logger.info('getUploadUrl method fired',
-        {
-            Bucket: bucketName,
-            Key: todoId,
-            Expires: urlExpiration
-        }
-    )
-    return s3.getSignedUrl('putObject', {
-        Bucket: bucketName,
-        Key: todoId,
-        Expires: urlExpiration
-    })
-}
 

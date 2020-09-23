@@ -3,8 +3,10 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } f
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
 import { TodoItem } from '../../models/TodoItem'
 // import { TodoUpdate } from '../../models/TodoUpdate'
-import { getUserId, validateTodoItem } from '../utils'
+import { getUserId } from '../utils'
 import { TodosRepository } from '../../dataLayer/todos'
+import { validateTodoItem } from '../../BusinessLayer/todos'
+
 
 
 // import * as AWS from 'aws-sdk'

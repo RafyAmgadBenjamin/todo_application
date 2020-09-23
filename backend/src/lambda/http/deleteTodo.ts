@@ -3,7 +3,8 @@ import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 // import * as AWS from 'aws-sdk'
 import { TodoItem } from '../../models/TodoItem'
-import { getUserId, validateTodoItem } from '../utils'
+import { getUserId } from '../utils'
+import { validateTodoItem } from '../../BusinessLayer/todos'
 import { TodosRepository } from '../../dataLayer/todos'
 
 
