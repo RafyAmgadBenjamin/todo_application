@@ -17,27 +17,7 @@ provider:
     TODOS_USER_INDEX:  Todos-user-index-${self:provider.stage}
     TODOS_S3_BUCKET:   todos-attachment-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
-    # AUTH_0_SECRET:  OVgxWcpO6GBif7Swu5nDGZ5tLMYANDH13_ME_M5z53K87CoNmcLvazvRXA8mzIcW
     
-
-  # iamRoleStatements:
-  #   - Effect: Allow
-  #     Action:
-  #       - dynamodb:Scan
-  #       - dynamodb:PutItem
-  #       - dynamodb:GetItem
-  #       - dynamodb:DeleteItem
-  #       - dynamodb:UpdateItem
-  #     Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
-  #   - Effect: Allow
-  #     Action:
-  #       - dynamodb:Query
-  #     Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODOS_USER_INDEX}
-  #   - Effect: Allow
-  #     Action: 
-  #       - s3:PutObject
-  #       - s3:GetObject
-  #     Resource: arn:aws:s3:::${self:provider.environment.TODOS_S3_BUCKET}/*
 
 functions:
   # TODO: uncomment this section to make auth work again

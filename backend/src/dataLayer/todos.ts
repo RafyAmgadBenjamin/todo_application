@@ -2,9 +2,11 @@
 import * as AWS from 'aws-sdk'
 import { TodoItem } from '../models/TodoItem'
 import { TodoUpdate } from '../models/TodoUpdate'
+import { createLogger } from '../utils/logger'
 
 
 
+const logger = createLogger('auth')
 const docClient = new AWS.DynamoDB.DocumentClient()
 const todoUserIndex = process.env.TODOS_USER_INDEX
 const todosTable = process.env.TODOS_TABLE
@@ -13,6 +15,10 @@ const todosTable = process.env.TODOS_TABLE
 export class TodosRepository {
 
     async getTodoItem(todoId: String) {
+
+        logger.info('getTodoItem method fired to get a todo', {
+            todoId: todoId,
+        })
 
         return await docClient.get({
             TableName: todosTable,
@@ -23,6 +29,11 @@ export class TodosRepository {
     }
 
     async getTodosForUser(userId: String) {
+
+        logger.info('getTodosForUser method fired to get all the user todos', {
+            userId: userId,
+        })
+
         return docClient.query({
             TableName: todosTable,
             IndexName: todoUserIndex,
@@ -34,6 +45,9 @@ export class TodosRepository {
     }
 
     async addTodoItem(todoItem: TodoItem) {
+        logger.info('addTodoItem method fired to add a new todo', {
+            todoItem: todoItem,
+        })
         await docClient.put({
             TableName: todosTable,
             Item: todoItem
@@ -41,6 +55,9 @@ export class TodosRepository {
     }
 
     async deleteTodoItem(todoId: String) {
+        logger.info('deleteTodoItem method fired to delete a todo', {
+            todoItem: todoId,
+        })
         await docClient.delete({
             TableName: todosTable,
             Key: {
@@ -67,7 +84,7 @@ export class TodosRepository {
 
         }).promise()
     }
-    async updateTodoAttachementUrl(todoId: string, attachmentUrl: string) {
+    async updateTodoAttachmentUrl(todoId: string, attachmentUrl: string) {
         // update the todo item with the attachment url 
         await docClient.update({
             TableName: todosTable,

@@ -1,18 +1,17 @@
 import 'source-map-support/register'
-
+import { createLogger } from '../../utils/logger'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
-// import * as AWS from 'aws-sdk'
 import { getUserId } from '../utils'
 import { TodosRepository } from '../../dataLayer/todos'
 
-
-// const docClient = new AWS.DynamoDB.DocumentClient()
-// const todosTable = process.env.TODOS_TABLE
+const logger = createLogger('auth')
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   // TODO: Get all TODO items for a current user
-  console.log("processing get todos", event)
-  // const todoId = event.pathParameters.todoId
+  logger.info('GetTodo event fired', {
+    event: event,
+  })
+
   // TODO: replace this constant with user id from jwt
   const userId = getUserId(event)
   let todosRepository = new TodosRepository()

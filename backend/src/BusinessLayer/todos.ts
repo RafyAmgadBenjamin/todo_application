@@ -2,11 +2,20 @@ import { TodoItem } from '../models/TodoItem'
 import * as uuid from 'uuid'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { S3 } from 'aws-sdk'
+import { createLogger } from '../utils/logger'
+
 
 const bucketName = process.env.TODOS_S3_BUCKET
+const logger = createLogger('auth')
+
 
 
 export function validateTodoItem(todoItem: TodoItem, userId: string) {
+    logger.info('validateTodoItem method fired', {
+        todoItem: todoItem,
+        userId: userId
+    })
+
     // Todo item is not found
     if (!todoItem) {
         return {
@@ -32,6 +41,12 @@ export function validateTodoItem(todoItem: TodoItem, userId: string) {
 
 
 export async function createSingleTodo(userId: string, createTodoRequest: CreateTodoRequest): Promise<TodoItem> {
+
+    logger.info('createSingleTodo method fired', {
+        createTodoRequest: createTodoRequest,
+        userId: userId
+    })
+
     // Generate a UUID for the todo
     const todoId = uuid.v4()
     const newItem: TodoItem = {
@@ -54,6 +69,10 @@ export async function getTodoAttachmentUrl(todoAttachmentId: string): Promise<st
 }
 
 export function getUploadUrl(todoId: string) {
+    logger.info('getUploadUrl method fired to get the upload url', {
+        todoId: todoId
+    })
+
     // Get a signed url 
     const s3 = new S3({ signatureVersion: 'v4' })
     const urlExpiration = process.env.SIGNED_URL_EXPIRATION

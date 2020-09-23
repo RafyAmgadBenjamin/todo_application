@@ -2,20 +2,18 @@ import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
 import { TodoItem } from '../../models/TodoItem'
-// import { TodoUpdate } from '../../models/TodoUpdate'
 import { getUserId } from '../utils'
 import { TodosRepository } from '../../dataLayer/todos'
 import { validateTodoItem } from '../../BusinessLayer/todos'
+import { createLogger } from '../../utils/logger'
 
-
-
-// import * as AWS from 'aws-sdk'
-
-
-// const docClient = new AWS.DynamoDB.DocumentClient()
-// const todosTable = process.env.TODOS_TABLE
+const logger = createLogger('auth')
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    logger.info('UpdateTodo event fired', {
+        event: event,
+    })
+
     const todoId = event.pathParameters.todoId
     const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
 
