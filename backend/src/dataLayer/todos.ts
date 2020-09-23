@@ -67,6 +67,19 @@ export class TodosRepository {
 
         }).promise()
     }
+    async updateTodoAttachementUrl(todoId: string, attachmentUrl: string) {
+        // update the todo item with the attachment url 
+        await docClient.update({
+            TableName: todosTable,
+            Key: {
+                todoId
+            },
+            UpdateExpression: 'set attachmentUrl = :attachmentUrl',
+            ExpressionAttributeValues: {
+                ':attachmentUrl': attachmentUrl
+            }
+        }).promise()
+    }
 
 }
 

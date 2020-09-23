@@ -4,10 +4,10 @@ import { S3 } from 'aws-sdk'
 import { TodosRepository } from '../../dataLayer/todos'
 // import { UpgradeRequired } from 'http-errors'
 // import * as uuid from 'uuid'
-import * as AWS from 'aws-sdk'
+// import * as AWS from 'aws-sdk'
 import { TodoItem } from '../../models/TodoItem'
 import { createLogger } from '../../utils/logger'
-import { getUserId } from '../utils'
+import { getUserId, validateTodoItem } from '../utils'
 
 
 
@@ -17,8 +17,8 @@ const logger = createLogger('auth')
 
 const bucketName = process.env.TODOS_S3_BUCKET
 const urlExpiration = process.env.SIGNED_URL_EXPIRATION
-const docClient = new AWS.DynamoDB.DocumentClient()
-const todosTable = process.env.TODOS_TABLE
+// const docClient = new AWS.DynamoDB.DocumentClient()
+// const todosTable = process.env.TODOS_TABLE
 const s3 = new S3({ signatureVersion: 'v4' })
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -51,26 +51,9 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         // Additional information stored with a log statement
         todo: todo.todoId
     })
-    // Todo item is not found
-    if (!todo) {
-        return {
-            statusCode: 404,
-            headers: {
-                'Access-Control-Allow-Origin': '*'
-            },
-            body: ''
-        }
-    }
-    // User is not allowed to update the todo
-    if (todo.userId !== userId) {
-        return {
-            statusCode: 403,
-            headers: {
-                'Access-Control-Allow-Origin': '*'
-            },
-            body: ''
-        }
-    }
+    // Validate todoItem 
+    validateTodoItem(todo, userId)
+
     // Update the todo with url 
     logger.info('generateUploadUrl_method validate todo done')
 
@@ -80,7 +63,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         { attachmentUrl: attachmentUrl }
     )
 
-    await updateTodoAttachementUrl(todoId, attachmentUrl)
+    await todosRepository.updateTodoAttachementUrl(todoId, attachmentUrl)
     logger.info('generateUploadUrl_method update todo item', {
         todoId: todoId,
         attachmentUrl: attachmentUrl
@@ -119,16 +102,3 @@ function getUploadUrl(todoId: string) {
     })
 }
 
-async function updateTodoAttachementUrl(todoId: string, attachmentUrl: string) {
-    // update the todo item with the attachment url 
-    await docClient.update({
-        TableName: todosTable,
-        Key: {
-            todoId
-        },
-        UpdateExpression: 'set attachmentUrl = :attachmentUrl',
-        ExpressionAttributeValues: {
-            ':attachmentUrl': attachmentUrl
-        }
-    }).promise()
-}

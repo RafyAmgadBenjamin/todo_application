@@ -3,7 +3,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } f
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
 import { TodoItem } from '../../models/TodoItem'
 // import { TodoUpdate } from '../../models/TodoUpdate'
-import { getUserId } from '../utils'
+import { getUserId, validateTodoItem } from '../utils'
 import { TodosRepository } from '../../dataLayer/todos'
 
 
@@ -23,29 +23,11 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     const userId = getUserId(event)
     let todosRepository = new TodosRepository()
     const result = await todosRepository.getTodoItem(todoId)
-    const todo_item = result.Item as TodoItem
+    const todoItem = result.Item as TodoItem
 
-    // Todo item is not found
-    if (!todo_item) {
-        return {
-            statusCode: 404,
-            headers: {
-                'Access-Control-Allow-Origin': '*'
-            },
-            body: ''
-        }
-    }
+    // Validate todoItem 
+    validateTodoItem(todoItem, userId)
 
-    // User is not allowed to update the todo
-    if (todo_item.userId !== userId) {
-        return {
-            statusCode: 403,
-            headers: {
-                'Access-Control-Allow-Origin': '*'
-            },
-            body: ''
-        }
-    }
     // Update todo in the DB
     await todosRepository.updateTodoItem(updatedTodo, todoId)
 
@@ -55,7 +37,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Credentials': true
         },
-        body: JSON.stringify(todo_item.todoId)
+        body: JSON.stringify(todoItem.todoId)
     }
 }
 

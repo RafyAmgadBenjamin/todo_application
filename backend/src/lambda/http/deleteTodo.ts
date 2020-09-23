@@ -3,7 +3,7 @@ import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 // import * as AWS from 'aws-sdk'
 import { TodoItem } from '../../models/TodoItem'
-import { getUserId } from '../utils'
+import { getUserId, validateTodoItem } from '../utils'
 import { TodosRepository } from '../../dataLayer/todos'
 
 
@@ -22,38 +22,20 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
     const result = await todosRepository.getTodoItem(todoId)
 
-    const todo_item = result.Item as TodoItem
+    const todoItem = result.Item as TodoItem
 
-    // Todo item is not found
-    if (!todo_item) {
-        return {
-            statusCode: 404,
-            headers: {
-                'Access-Control-Allow-Origin': '*'
-            },
-            body: ''
-        }
-    }
+    // Validate todoItem 
+    validateTodoItem(todoItem, userId)
 
-    // User is not allowed to delete the todo
-    if (todo_item.userId !== userId) {
-        return {
-            statusCode: 403,
-            headers: {
-                'Access-Control-Allow-Origin': '*'
-            },
-            body: ''
-        }
-    }
     // Delete Item from DB
-    await todosRepository.deleteTodoItem(todo_item.todoId)
+    await todosRepository.deleteTodoItem(todoItem.todoId)
 
     return {
         statusCode: 200,
         headers: {
             'Access-Control-Allow-Origin': '*',
         },
-        body: JSON.stringify(todo_item.todoId)
+        body: JSON.stringify(todoItem.todoId)
     }
 }
 
