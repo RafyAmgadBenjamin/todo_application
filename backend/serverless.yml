@@ -21,8 +21,8 @@ provider:
 
 functions:
   # TODO: uncomment this section to make auth work again
-  # Auth:
-  #   handler: src/lambda/auth/auth0Authorizer.handler
+  Auth:
+    handler: src/lambda/auth/auth0Authorizer.handler
 
   # TODO: Configure this function
   GetTodos:
