@@ -1,9 +1,10 @@
 import { TodoItem } from '../models/TodoItem'
 import * as uuid from 'uuid'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
-import { S3 } from 'aws-sdk'
 import { createLogger } from '../utils/logger'
 
+const AWSXRay = require('aws-xray-sdk-core');
+const AWS = AWSXRay.captureAWS(require('aws-sdk'));
 
 const bucketName = process.env.TODOS_S3_BUCKET
 const logger = createLogger('auth')
@@ -74,7 +75,7 @@ export function getUploadUrl(todoId: string) {
     })
 
     // Get a signed url 
-    const s3 = new S3({ signatureVersion: 'v4' })
+    const s3 = new AWS.S3({ signatureVersion: 'v4' })
     const urlExpiration = process.env.SIGNED_URL_EXPIRATION
 
     return s3.getSignedUrl('putObject', {

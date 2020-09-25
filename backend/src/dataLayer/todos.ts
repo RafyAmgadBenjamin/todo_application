@@ -1,5 +1,4 @@
 
-import * as AWS from 'aws-sdk'
 import { TodoItem } from '../models/TodoItem'
 import { TodoUpdate } from '../models/TodoUpdate'
 import { createLogger } from '../utils/logger'
@@ -7,7 +6,10 @@ import { createLogger } from '../utils/logger'
 
 
 const logger = createLogger('auth')
+const AWSXRay = require('aws-xray-sdk-core');
+const AWS = AWSXRay.captureAWS(require('aws-sdk'));
 const docClient = new AWS.DynamoDB.DocumentClient()
+
 const todoUserIndex = process.env.TODOS_USER_INDEX
 const todosTable = process.env.TODOS_TABLE
 
